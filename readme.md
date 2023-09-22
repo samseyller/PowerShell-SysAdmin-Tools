@@ -16,7 +16,7 @@ A replacemnt for ping. An optional count parameter can be supplied. If none is g
 
 Usage:
 
-    p [hostname*] [count]
+    p [hostname] [count*]
 
 ### Logged In
 
@@ -34,4 +34,4 @@ Usage:
 
     my-ip
 
-**An asterisk indicates a mandatory parameter of a function*
+**An asterisk indicates an optional parameter of a function*
