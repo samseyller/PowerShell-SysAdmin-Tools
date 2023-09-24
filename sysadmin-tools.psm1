@@ -1,6 +1,10 @@
+Set-Alias -name p -value Ping-Host
+Set-Alias -name logged-in -value Get-Logged-In-User
+Set-Alias -name my-ip -value Get-My-IP-Address
+
 ## Function: p [*hostname] [count]
 ## Replacement for ping. An optional count parameter can be supplied. If none is given, the ping will run indefinetly. 
-function p {
+function Ping-Host {
 	param($computername,$count)
 	if($count){
 		Test-Connection $computername -count $count
@@ -12,7 +16,7 @@ function p {
 
 ## Function: logged-in [computername]
 ## Return the current logged-in user of a remote machine.
-function logged-in {
+function Get-Logged-In-User {
 	[CmdletBinding()]
 	param (
 		[Parameter(Mandatory=$True)]
@@ -27,7 +31,7 @@ function logged-in {
 
 ## Function: my-ip
 ## Lookup internal and external IP address for local machine.
-function my-ip {
+function Get-My-IP-Address {
 	$internal = Get-NetIPAddress -AddressFamily IPv4 | select -Expand IPAddress
 	echo "Internal: $internal"
 	$external = curl ifconfig.me | select -Expand Content
