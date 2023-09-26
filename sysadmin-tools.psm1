@@ -9,7 +9,10 @@ function Ping-Host {
 	if($count){
 		Test-Connection $computername -count $count
 	} else {
-		while (1) {Test-Connection $computername}
+		while (1) {
+  			Test-Connection $computername -count 1
+     			Start-Sleep -seconds 1
+		}
 	}
 	
 }
@@ -23,8 +26,8 @@ function Get-Logged-In-User {
 		[string[]]$computername
 	)
 	foreach ($pc in $computername){
-		$logged_in = (gwmi win32_computersystem -COMPUTER $pc).username
-		$name = $logged_in.split("\")[1]
+		$logged_in = Get-WMIObject -class 
+		$name = $logged_in
 		"{0}: {1}" -f $pc,$name
 	}
 }
@@ -34,6 +37,6 @@ function Get-Logged-In-User {
 function Get-My-IP-Address {
 	$internal = Get-NetIPAddress -AddressFamily IPv4 | select -Expand IPAddress
 	echo "Internal: $internal"
-	$external = curl ifconfig.me | select -Expand Content
+	$external = curl -s ifconfig.me
 	echo "External: $external"
 }
