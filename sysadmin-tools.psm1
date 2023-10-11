@@ -2,16 +2,42 @@ Set-Alias -name p -value Ping-Host
 Set-Alias -name logged-in -value Get-Logged-In-User
 Set-Alias -name my-ip -value Get-My-IP-Address
 
+$default_window_title = "PowerShell "+$host.Version
+
 ## Function: p [*hostname] [count]
 ## Replacement for ping. An optional count parameter can be supplied. If none is given, the ping will run indefinetly. 
 function Ping-Host {
 	param($computername,$count)
+	$host.ui.rawui.windowtitle="Pinging: "+ $computername
 	if($count){
 		Test-Connection $computername -count $count
+		$host.ui.rawui.windowtitle=$default_window_title
 	} else {
-		while (1) {Test-Connection $computername}
+		do {
+			Ping-Host-Worker $computername 1
+			Start-Sleep -seconds 1
+		} until ([System.Console]::KeyAvailable)
+		$host.ui.rawui.windowtitle=$default_window_title
 	}
-	
+}
+
+function Ping-Host-Worker($computername,$count) {
+	try {
+		$test = Test-Connection $computername -ErrorAction Stop -count $count
+		$test
+		if($test[0].status -eq "Success"){
+			# $host.ui.rawui.windowtitle= "`u{1F600} Pinging: "+ $computername         # Happy Face
+			$host.ui.rawui.windowtitle= "`u{1F7E2} Pinging: "+ $computername     # Green Circle
+		} else {
+			# $host.ui.rawui.windowtitle= "`u{1F620} Pinging: "+ $computername     # Angry Face
+			$host.ui.rawui.windowtitle= "`u{1F534} Pinging: "+ $computername         # Red Circle
+		}
+	}
+	catch [System.Net.NetworkInformation.PingException]{
+		Write-Host "`u{1F534}" $_.Exception.Message
+		# $host.ui.rawui.windowtitle= "`u{1F620} Pinging: "+ $computername     # Angry Face
+		$host.ui.rawui.windowtitle= "`u{1F534} Pinging: "+ $computername         # Red Circle
+	}
 }
 
 ## Function: logged-in [computername]
