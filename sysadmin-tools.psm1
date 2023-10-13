@@ -1,8 +1,15 @@
+# Function Alias Definitions
 Set-Alias -name p -value Ping-Host
 Set-Alias -name logged-in -value Get-Logged-In-User
 Set-Alias -name my-ip -value Get-My-IP-Address
+Set-Alias -name welcome -value Get-Welcome-Message
 
+## Input your name for the welcome script
+$myName = ""
+
+## Default window title for your terminal 
 $default_window_title = "PowerShell "+$host.Version
+
 
 ## Function: p [*hostname] [count]
 ## Replacement for ping. An optional count parameter can be supplied. If none is given, the ping will run indefinetly. 
@@ -40,6 +47,7 @@ function Ping-Host-Worker($computername,$count) {
 	}
 }
 
+
 ## Function: logged-in [computername]
 ## Return the current logged-in user of a remote machine.
 function Get-Logged-In-User {
@@ -55,11 +63,35 @@ function Get-Logged-In-User {
 	}
 }
 
+
 ## Function: my-ip
 ## Lookup internal and external IP address for local machine.
 function Get-My-IP-Address {
-	$internal = Get-NetIPAddress -AddressFamily IPv4 | select -Expand IPAddress
-	echo "Internal: $internal"
+	$internal = Get-NetIPAddress -AddressFamily IPv4 | Select-Object -Expand IPAddress
+	Write-Host "Internal: $internal"
 	$external = curl -s ifconfig.me
-	echo "External: $external"
+	Write-Host "External: $external"
 }
+
+
+## Function welcome
+## Prints a welcome message dependant on the time of day. 
+function Get-Welcome-Message {
+	$currentTime = Get-Date
+	$hour = $currentTime.Hour
+
+	if ($hour -lt 12) {
+		if($myName){Write-Host "Good morning, $myName!"}else{Write-Host "Good morning!"}
+	} elseif ($hour -ge 12 -and $hour -lt 18) {
+		if($myName){Write-Host "Good afternoon, $myName!"}else{Write-Host "Good afternoon!"}
+	} else {
+		if($myName){Write-Host "Good evening, $myName!"}else{Write-Host "Good evening!"}
+	}
+}
+
+
+## Set Window Title 
+$host.ui.rawui.windowtitle=$default_window_title
+
+## Print Welcome Message
+Get-Welcome-Message
