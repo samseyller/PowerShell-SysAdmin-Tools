@@ -10,6 +10,14 @@ To locate your PowerShell Profle, you can run the following command:
 
 ## Included Functions
 
+### dir-size
+
+Calculates the size of a directory, including all sub-folders and sub-files. Prints in human-readable figures such as 123.45 GB or 35.79 MB. Optinally, you may use the -bytes flag to return the raw size in bytes.
+
+Usage:
+
+    dir-size [path]
+
 ### (P)ing
 
 A replacemnt for ping. An optional count parameter can be supplied. If none is given, the ping will run indefinetly.

@@ -1,4 +1,5 @@
 # Function Alias Definitions
+Set-Alias -name dir-size -value Get-Directory-Size
 Set-Alias -name p -value Ping-Host
 Set-Alias -name logged-in -value Get-Logged-In-User
 Set-Alias -name my-ip -value Get-My-IP-Address
@@ -10,6 +11,31 @@ $myName = ""
 ## Default window title for your terminal 
 $default_window_title = "PowerShell "+$host.Version
 
+## Convert file sizes into human readable format
+function Format-FileSize {
+    param (
+        [float]$size
+    )
+    $units = "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
+    $index = 0
+    while ($size -ge 1024 -and $index -lt $units.Length) {
+        $size /= 1024
+        $index++
+    }
+    return "{0:N2} {1}" -f $size, $units[$index]
+}
+
+## dir-size [*path]
+## Calculate the size of a directory, including all sub-files and folders.
+function Get-Directory-Size {
+	param ([string]$path,[switch]$bytes)
+	$size = (Get-ChildItem -Recurse -Force $path | Measure-Object -Property Length -Sum).Sum
+	if($bytes){
+		Write-Host $size
+	} else {
+		Write-Host (Format-FileSize $size)
+	}
+}
 
 ## Function: p [*hostname] [count]
 ## Replacement for ping. An optional count parameter can be supplied. If none is given, the ping will run indefinetly. 
