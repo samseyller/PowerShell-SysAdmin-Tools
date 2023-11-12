@@ -11,6 +11,45 @@ $myName = ""
 ## Default window title for your terminal 
 $default_window_title = "PowerShell "+$host.Version
 
+# Customizes the appearance of the PowerShell Prompt. Adjust the variables below to change how the path is displayed, the prompt symbol, and the colors. 
+function prompt {
+	# BEGIN CUSTOMIZATION #
+	$CustomizePrompt = 1 	# Set this value to '0' if you do not want the prompt to be customized. 
+	$CurrentFolderOnly = 0 	# Set to "0" to print full path. Set to "1" to print current folder only. 
+	$ReplaceHomeDir = 1		# Set to "1" to replace the user's home directory with a symbol. 
+	$HomeDirSymbol = "~"		# Choose the symbol to represent the user's home directory
+	$PathColor = "DarkGray" 	# Choose the color for the path. 
+	$PromptSymbol = ">"		# Choose the symbol that follows the path.
+	$PromptSymbolColor = "Green" 	# Choose the color of this symbol. 
+	# END CUSTOMIZATION #
+
+	# Return null if we do not want the prompt to be modified. 
+	if(! $CustomizePrompt){
+		return $Null
+	}
+
+	# Initialize PromptPath
+	$PromptPath = "$PWD"
+
+	# Replaces the user's home directory path with a symbol, if set above
+	if($ReplaceHomeDir){
+		if($PromptPath -like "$HOME*"){
+			$PromptPath = $PromptPath -replace [regex]::Escape($HOME), $HomeDirSymbol
+		}
+	}
+
+	# Displays only the current folder from the path, if set above
+	if($CurrentFolderOnly){
+		$PromptPath = "$PromptPath".Split('\')[-1]
+	}
+
+	# Write the prompt path
+	Write-Host $PromptPath -NoNewline -ForegroundColor $PathColor
+	# Write the prompt symbol
+	Write-Host $PromptSymbol -NoNewline -ForegroundColor $PromptSymbolColor
+	return " "
+}
+
 ## Convert file sizes into human readable format
 function Format-FileSize {
     param (
