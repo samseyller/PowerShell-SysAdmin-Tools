@@ -71,7 +71,7 @@ Examples:
 
 ### (P)ing
 
-A replacemnt for ping. An optional count parameter can be supplied. If none is given, the ping will run indefinetly.
+A replacemnt for the ping command. An optional count parameter can be supplied. If none is given, the ping will run indefinetly. The ping can be stopped at anytime by pressing any key. The Window Title will display the current status and the hostname being pinged.
 
 Usage:
 

@@ -88,33 +88,36 @@ function Ping-Host {
 	param($computername,$count)
 	$host.ui.rawui.windowtitle="Pinging: "+ $computername
 	if($count){
-		Test-Connection $computername -count $count
-		$host.ui.rawui.windowtitle=$default_window_title
+		for($c=1; $c -le $count; $c++){
+			Ping-Host-Worker $computername
+			if($c -ne $count) {Start-Sleep -seconds 1}
+			if([System.Console]::KeyAvailable){break}			# Break if user presses any key
+		}
 	} else {
 		do {
-			Ping-Host-Worker $computername 1
+			Ping-Host-Worker $computername
 			Start-Sleep -seconds 1
-		} until ([System.Console]::KeyAvailable)
-		$host.ui.rawui.windowtitle=$default_window_title
+		} until ([System.Console]::KeyAvailable)				# Stop if user presses any key
 	}
+	$host.ui.rawui.windowtitle=$default_window_title
 }
 
-function Ping-Host-Worker($computername,$count) {
+function Ping-Host-Worker($computername) {
+	$PingSuccessSymbol = "`u{1F7E2}"	# Green Circle
+	$PingFailSymbol = "`u{1F534}"		# Red Circle
 	try {
-		$test = Test-Connection $computername -ErrorAction Stop -count $count
-		$test
+		$test = Test-Connection $computername -ErrorAction Stop -count 1					# Ping Function
+		$test | Select-Object Address,Latency,Status										# Ping Output Displayed
+		
 		if($test[0].status -eq "Success"){
-			# $host.ui.rawui.windowtitle= "`u{1F600} Pinging: "+ $computername         # Happy Face
-			$host.ui.rawui.windowtitle= "`u{1F7E2} Pinging: "+ $computername     # Green Circle
+			$host.ui.rawui.windowtitle= $PingSuccessSymbol+" Pinging: "+ $computername     	# Update Window Title
 		} else {
-			# $host.ui.rawui.windowtitle= "`u{1F620} Pinging: "+ $computername     # Angry Face
-			$host.ui.rawui.windowtitle= "`u{1F534} Pinging: "+ $computername         # Red Circle
+			$host.ui.rawui.windowtitle= $PingFailSymbol+" Pinging: "+ $computername     	# Update Window Title
 		}
 	}
 	catch [System.Net.NetworkInformation.PingException]{
-		Write-Host "`u{1F534}" $_.Exception.Message
-		# $host.ui.rawui.windowtitle= "`u{1F620} Pinging: "+ $computername     # Angry Face
-		$host.ui.rawui.windowtitle= "`u{1F534} Pinging: "+ $computername         # Red Circle
+		Write-Host $_.Exception.Message -ForegroundColor Red							# Display Exception
+		$host.ui.rawui.windowtitle= $PingFailSymbol+" Pinging: "+ $computername     	# Update Window Title
 	}
 }
 
