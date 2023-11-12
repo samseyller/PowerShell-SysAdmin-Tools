@@ -4,6 +4,7 @@ Set-Alias -name p -value Ping-Host
 Set-Alias -name logged-in -value Get-Logged-In-User
 Set-Alias -name my-ip -value Get-My-IP-Address
 Set-Alias -name welcome -value Get-Welcome-Message
+Set-Alias -name password -value New-Random-Password
 
 ## Input your name for the welcome script
 $myName = ""
@@ -163,6 +164,48 @@ function Get-Welcome-Message {
 	} else {
 		if($myName){Write-Host "Good evening, $myName!"}else{Write-Host "Good evening!"}
 	}
+}
+
+## Function password [length]
+## Generates a random password. Defaults to 12 character password, non-ambiguous characters, including all character types.
+function New-Random-Password {
+    param (
+        [int]$Length = 12,[switch]$Ambiguous,[switch]$Upper,[switch]$Lower,[switch]$Number,[switch]$Symbol
+    )
+
+	# Define Character Sets
+	if($Ambiguous){
+    $LowerCaseLetters = 'abcdefghijklmnopqrstuvwxyz'
+    $UpperCaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    $Numbers = '0123456789'
+    $Symbols = '!@#$%^&*()-_=+[]{}|;:,.<>?/'
+	} else {
+	$LowerCaseLetters = 'abcdefghjkmnpqrstuvwxyz'
+    $UpperCaseLetters = 'ABCDEFGHJKLMNPQRSTUVWXYZ'
+    $Numbers = '23456789'
+    $Symbols = '!@#$%^&*()-_=+[]{}|;:,.<>?/'
+	}
+
+	# Combine Character Sets
+	if(! ($Upper -or $Lower -or $Number -or $Symbol)){
+		# If no flags are set, combine all character sets
+		$CharacterSet = $LowerCaseLetters + $UpperCaseLetters + $Numbers + $Symbols
+	} else {
+		$CharacterSet = ""
+		if($Upper) { $CharacterSet += $UpperCaseLetters }
+		if($Lower) { $CharacterSet += $LowerCaseLetters }
+		if($Number) { $CharacterSet += $Numbers }
+		if($Symbol) { $CharacterSet += $Symbols }
+	}
+
+    # Generate Random Bytes
+    $Random = New-Object System.Security.Cryptography.RNGCryptoServiceProvider
+    $Bytes = New-Object byte[] ($Length)
+    $Random.GetBytes($Bytes)
+
+    # Generate Password from Random Bytes
+    $Password = -join ($Bytes | ForEach-Object { $CharacterSet[$_ % $CharacterSet.Length] })
+    return $Password
 }
 
 

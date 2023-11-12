@@ -93,4 +93,27 @@ Usage:
 
     my-ip
 
+
+
+### Password Generator
+
+Used to generate a random password. By default, it will generate a 12 character password using non-ambiguous characters, including letters, numbers, and symbols. The optional -Ambiguous flag can be set to use all possible letters & numbers. The following flags can be set to specify the character types used: -Upper -Lower -Number -Symbol
+
+Usage:
+
+    password [length*] [Ambiguous] [Upper] [Lower] [Number] [Symbol]
+
+Examples:
+    > password
+    Z<.]W(BjAab.
+
+    > password 8
+    nBbpg!]C
+
+    > password -Number -Upper
+    5V2CBRHRLPMR
+
+    > password -Ambiguous
+    1G7fK$-l3d9O
+
 **An asterisk indicates an optional parameter of a function*
