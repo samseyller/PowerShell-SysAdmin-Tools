@@ -128,9 +128,9 @@ function Get-Logged-In-User {
 		[string[]]$computername
 	)
 	foreach ($pc in $computername){
-		$logged_in = Get-WMIObject -class 
-		$name = $logged_in
-		"{0}: {1}" -f $pc,$name
+		$logged_in = (Get-WMIObject win32_computersystem -COMPUTER $pc).username	# Retrieves the username of the remote user
+		$name = $logged_in.split("\")[1]											# Strips the domain prefix from the username
+		"{0}: {1}" -f $pc,$name														# Prints the PC and Username
 	}
 }
 
