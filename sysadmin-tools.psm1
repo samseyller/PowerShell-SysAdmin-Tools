@@ -138,8 +138,10 @@ function Get-Logged-In-User {
 ## Function: my-ip
 ## Lookup internal and external IP address for local machine.
 function Get-My-IP-Address {
+	# Look up internal IP addresses using Get-NetIPAddress
 	$internal = Get-NetIPAddress -AddressFamily IPv4 | Select-Object -Expand IPAddress
 	Write-Host "Internal: $internal"
+	# Look up external IP addresses by querying ifconfig.me
 	$external = curl -s ifconfig.me
 	Write-Host "External: $external"
 }
