@@ -52,11 +52,22 @@ All of the functions are referenced below by their alias. The alias is a shorten
 
 ### Directory Size
 
-Calculates the size of a directory, including all sub-folders and sub-files. Prints in human-readable figures such as 123.45 GB or 35.79 MB. Optinally, you may use the -bytes flag to return the raw size in bytes.
+Calculates the size of a directory, including all sub-folders and sub-files. Prints in human-readable figures such as 123.45 GB or 35.79 MB. Optinally, you may use the -bytes flag to return the raw size in bytes. If the -NoRecurse flag is set, the function will return only return the size of files in the specified folder (excluding sub-folders and files).
 
 Usage:
 
-    dir-size [path]
+    dir-size [path] -bytes -NoRecurse
+
+Examples:
+
+    > dir-size .\Downloads\
+    4.87 GB
+
+    > dir-size -NoRecurse .\Downloads\
+    711.78 MB
+
+    > dir-size -NoRecurse -bytes .\Downloads\
+    746358215
 
 ### (P)ing
 

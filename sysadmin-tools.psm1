@@ -67,8 +67,14 @@ function Format-FileSize {
 ## dir-size [*path]
 ## Calculate the size of a directory, including all sub-files and folders.
 function Get-Directory-Size {
-	param ([string]$path,[switch]$bytes)
-	$size = (Get-ChildItem -Recurse -Force $path | Measure-Object -Property Length -Sum).Sum
+	param ([string]$path,[switch]$bytes,[switch]$NoRecurse)
+	
+	if($NoRecurse){
+		$size = (Get-ChildItem -Force $path | Measure-Object -Property Length -Sum).Sum
+	} else {
+		$size = (Get-ChildItem -Recurse -Force $path | Measure-Object -Property Length -Sum).Sum
+	}
+		
 	if($bytes){
 		Write-Host $size
 	} else {
