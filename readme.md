@@ -40,11 +40,11 @@ By adjusting the variables found in the **prompt** function, you can customize t
 
 Here is an example where the path is modified to show the Current Directory Only:
 
-![Screenshot displaying example of CurrentFolderOnly customization](screenshots\Prompt-Customization-CurrentFolderOnly.jpg)
+![Screenshot displaying example of CurrentFolderOnly customization](screenshots/Prompt-Customization-CurrentFolderOnly.jpg)
 
 Here is an example of replacing the Home Directory Path with a **~** symbol:
 
-![Screenshot displaying example of ReplaceHomeDir customization](screenshots\Prompt-Customization-ReplaceHomeDir.jpg)
+![Screenshot displaying example of ReplaceHomeDir customization](screenshots/Prompt-Customization-ReplaceHomeDir.jpg)
 
 ## Included Functions
 
