@@ -168,9 +168,10 @@ function Get-Welcome-Message {
 
 ## Function password [length]
 ## Generates a random password. Defaults to 12 character password, non-ambiguous characters, including all character types.
+
 function New-Random-Password {
     param (
-        [int]$Length = 12,[switch]$Ambiguous,[switch]$Upper,[switch]$Lower,[switch]$Number,[switch]$Symbol
+        [int]$Length = 12,[switch]$Ambiguous,[switch]$Upper,[switch]$Lower,[switch]$Number,[switch]$Symbol,[switch]$PlainText
     )
 
 	# Define Character Sets
@@ -200,12 +201,31 @@ function New-Random-Password {
 
     # Generate Random Bytes
     $Random = New-Object System.Security.Cryptography.RNGCryptoServiceProvider
-    $Bytes = New-Object byte[] ($Length)
+	$Bytes = New-Object byte[] ($Length)
     $Random.GetBytes($Bytes)
 
     # Generate Password from Random Bytes
     $Password = -join ($Bytes | ForEach-Object { $CharacterSet[$_ % $CharacterSet.Length] })
-    return $Password
+
+	if($PlainText){
+		return $Password
+	} else {
+		Write-Colorized-String $Password
+	}
+}
+
+function Write-Colorized-String{
+		param (
+			[string]$InputString
+		)
+		foreach ($char in $InputString.ToCharArray()) {
+			switch -Wildcard ($char) {
+				'[0-9]' { Write-Host -NoNewline $char -ForegroundColor Cyan }
+				'[A-Z]' { Write-Host -NoNewline $char -ForegroundColor Yellow }
+				default { Write-Host -NoNewline $char -ForegroundColor Red}
+			}
+		}
+		Write-Host 
 }
 
 
