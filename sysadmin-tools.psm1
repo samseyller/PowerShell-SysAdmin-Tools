@@ -168,10 +168,9 @@ function Get-Welcome-Message {
 
 ## Function password [length]
 ## Generates a random password. Defaults to 12 character password, non-ambiguous characters, including all character types.
-
 function New-Random-Password {
     param (
-        [int]$Length = 12,[switch]$Ambiguous,[switch]$Upper,[switch]$Lower,[switch]$Number,[switch]$Symbol,[switch]$PlainText
+        [int]$Length = 12,[switch]$Ambiguous,[switch]$Upper,[switch]$Lower,[switch]$Number,[switch]$Symbol,[switch]$Clip,[switch]$PlainText
     )
 
 	# Define Character Sets
@@ -187,17 +186,33 @@ function New-Random-Password {
     $Symbols = '!@#$%^&*()-_=+[]{}|;:,.<>?/'
 	}
 
-	# Combine Character Sets
 	if(! ($Upper -or $Lower -or $Number -or $Symbol)){
-		# If no flags are set, combine all character sets
-		$CharacterSet = $LowerCaseLetters + $UpperCaseLetters + $Numbers + $Symbols
-	} else {
-		$CharacterSet = ""
-		if($Upper) { $CharacterSet += $UpperCaseLetters }
-		if($Lower) { $CharacterSet += $LowerCaseLetters }
-		if($Number) { $CharacterSet += $Numbers }
-		if($Symbol) { $CharacterSet += $Symbols }
+		# If no flags are set, activate all character sets
+		$Upper = $true
+		$Lower = $true 
+		$Number = $true
+		$Symbol = $true
 	}
+	
+	# Generate the Character Set
+	$CharacterSet = ""
+	if($Upper) { $CharacterSet += $UpperCaseLetters }
+	if($Lower) { $CharacterSet += $LowerCaseLetters }
+	if($Number) { $CharacterSet += $Numbers }
+	if($Symbol) { $CharacterSet += $Symbols }
+
+	# Guarantee at least one of each character type appears in password
+	$Password = $null
+	if($Upper) { $password += ($UpperCaseLetters -Split "" | Where-Object { $_ -ne '' } | Get-Random) }
+	if($Lower) { $password += ($LowerCaseLetters -Split "" | Where-Object { $_ -ne '' } | Get-Random) }
+	if($Number) { $password += ($Numbers -Split "" | Where-Object { $_ -ne '' } | Get-Random) }
+	if($Symbol) { $password += ($Symbols -Split "" | Where-Object { $_ -ne '' } | Get-Random) }
+
+	# Adjust length
+	$Length = $Length - $Password.Length
+
+	# Protect against negative length passwords
+	if($Length -lt 0) { $Length = 0 }
 
     # Generate Random Bytes
     $Random = New-Object System.Security.Cryptography.RNGCryptoServiceProvider
@@ -205,9 +220,15 @@ function New-Random-Password {
     $Random.GetBytes($Bytes)
 
     # Generate Password from Random Bytes
-    $Password = -join ($Bytes | ForEach-Object { $CharacterSet[$_ % $CharacterSet.Length] })
+    $Password += -join ($Bytes | ForEach-Object { $CharacterSet[$_ % $CharacterSet.Length] })
 
-	if($PlainText){
+	# Shuffle the characters in the password
+    $Password = $Password.ToCharArray() | Get-Random -Count $Password.Length
+	$Password = $Password -join ""
+
+	if($Clip) {
+		Set-Clipboard -Value $Password
+	} elseif($PlainText) {
 		return $Password
 	} else {
 		Write-Colorized-String $Password
